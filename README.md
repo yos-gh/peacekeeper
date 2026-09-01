@@ -3,7 +3,8 @@
 PEACEKEEPER is a minimalist arcade game about intervening in an endless,
 self-running conflict. Two autonomous factions repaint the battlefield while
 you defend neutral territory with an Arkanoid-style paddle. Your goal is not
-to win the war, but to keep both sides in balance.
+to win the war, but to keep both sides in balance and slow the advance of the
+Doomsday Clock.
 
 [Play PEACEKEEPER in your browser](https://yos-gh.github.io/peacekeeper/)
 
@@ -27,8 +28,8 @@ paddle at the bottom of the field.
 - Missing the ball advances the Doomsday Clock by 75 minutes.
 - Territory imbalance advances the clock quadratically. A difference of 20
   cells advances it by one hour every five real seconds.
-- The game ends at `24:00:00`, when either faction disappears, or when no
-  neutral territory remains.
+- The game ends when the Doomsday Clock reaches `24:00:00`, when either faction
+  disappears, or when no neutral territory remains.
 - War balls accelerate to 4x speed after two minutes and eventually reach 8x.
   The player ball is capped at 2x speed.
 
