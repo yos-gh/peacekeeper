@@ -1,0 +1,16 @@
+# Godot editor cache
+.godot/
+
+# Local diagnostics and generated previews
+*.log
+/preview.png.import
+
+# Private design notes
+/docs/draft.md
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+

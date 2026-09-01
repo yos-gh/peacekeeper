@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d2028">
+  <meta name="description" content="Play PEACEKEEPER, a minimalist arcade game about keeping two autonomous factions in balance.">
+  <title>PEACEKEEPER</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d2028;
+      --surface: #122b34;
+      --line: #29434a;
+      --text: #f1f6f4;
+      --muted: #8da4a5;
+      --light: #d9e8e3;
+      --peace: #d8ae78;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: radial-gradient(circle at 50% 10%, #183843 0, transparent 40rem), var(--bg);
+      font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--peace); text-underline-offset: .2em; }
+    a:hover { color: var(--light); }
+    .topbar {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 11px max(20px, calc((100vw - 1120px) / 2));
+      border-bottom: 1px solid var(--line);
+      background: rgb(13 32 40 / 86%);
+      backdrop-filter: blur(12px);
+    }
+    .brand { display: flex; align-items: baseline; gap: 14px; }
+    .brand h1 { margin: 0; font-size: 1rem; letter-spacing: .22em; }
+    .brand span { color: var(--muted); font-size: .75rem; letter-spacing: .08em; }
+    .topbar nav { font-size: .82rem; }
+    .game-wrap { width: min(calc(100% - 32px), 960px); margin: 0 auto; padding: 22px 0 30px; }
+    .game-shell {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border: 1px solid #375159;
+      border-radius: 12px;
+      background: #08171d;
+      box-shadow: 0 28px 90px rgb(0 0 0 / 42%);
+    }
+    .game-frame { display: block; width: 100%; height: 100%; border: 0; }
+    main { border-top: 1px solid var(--line); background: rgb(8 23 29 / 58%); }
+    .content { width: min(calc(100% - 40px), 920px); margin: 0 auto; padding: 44px 0 60px; }
+    .intro { max-width: 720px; margin: 0 0 34px; color: var(--muted); font-size: 1rem; }
+    .sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 44px; }
+    section { padding: 22px 0; border-top: 1px solid var(--line); }
+    section h2 { margin: 0 0 11px; color: var(--peace); font-size: .84rem; letter-spacing: .12em; text-transform: uppercase; }
+    section p, section ul { margin: 0; color: var(--muted); font-size: .9rem; }
+    section ul { padding-left: 1.15rem; }
+    section li + li { margin-top: 4px; }
+    code { color: var(--light); font-family: "Cascadia Mono", Consolas, monospace; }
+    footer { padding: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: .76rem; text-align: center; }
+    @media (max-width: 700px) {
+      .topbar { align-items: flex-start; flex-direction: column; gap: 2px; }
+      .brand span { display: none; }
+      .game-wrap { width: 100%; padding-top: 0; }
+      .game-shell { border-left: 0; border-right: 0; border-radius: 0; }
+      .sections { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><h1>PEACEKEEPER</h1><span>KEEP THE BALANCE</span></div>
+    <nav aria-label="Project links"><a href="https://github.com/yos-gh/peacekeeper">Source</a></nav>
+  </header>
+  <div class="game-wrap">
+    <div class="game-shell">
+      <iframe class="game-frame" src="game/index.html" title="PEACEKEEPER game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+    </div>
+  </div>
+  <main>
+    <div class="content">
+      <p class="intro">
+        Two autonomous factions are locked in an endless territorial war. Intervene with a neutral ball,
+        protect the space between them, and keep the Doomsday Clock from reaching midnight.
+      </p>
+      <div class="sections">
+        <section>
+          <h2>Controls</h2>
+          <ul>
+            <li>Move: <code>A / D</code> or left/right arrows</li>
+            <li>Gamepad: D-pad or left stick</li>
+            <li>Mobile: virtual analog stick</li>
+            <li>Return to title: <code>Esc</code></li>
+          </ul>
+        </section>
+        <section>
+          <h2>Objective</h2>
+          <p>Aim at the stronger faction. Your ball restores cells to neutral territory, but every miss advances the clock.</p>
+        </section>
+        <section>
+          <h2>Doomsday Clock</h2>
+          <p>The clock stops at exact parity and accelerates quadratically as the territorial gap grows. At 24:00:00, the world ends.</p>
+        </section>
+        <section>
+          <h2>Inspiration</h2>
+          <p>Inspired by <a href="https://github.com/vnglst/pong-wars">Pong Wars</a> by Koen van Gilst. Built with Godot 4.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer>PEACEKEEPER — browser prototype</footer>
+</body>
+</html>
