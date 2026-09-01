@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="PEACEKEEPER"
+config/version="1.0.0"
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.7")
+
+[debug]
+
+settings/gdscript/always_track_call_stacks=true
 
 [display]
 
@@ -52,3 +57,9 @@ back={
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[sentry]
+
+options/skip_auto_init_on_editor_play=true
+options/dsn="https://0cf32964b94c6aeba059771de14aabad@o4511784787771392.ingest.us.sentry.io/4512012310020096"
+schema_version=4

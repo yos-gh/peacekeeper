@@ -4,6 +4,7 @@
 # Local diagnostics and generated previews
 *.log
 /preview.png.import
+/web/game/*.import
 
 # Private design notes
 /docs/draft.md
@@ -13,4 +14,3 @@
 .vscode/
 .DS_Store
 Thumbs.db
-

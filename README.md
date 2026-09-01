@@ -25,7 +25,7 @@ paddle at the bottom of the field.
 
 - Aim toward the faction with more territory.
 - The paddle angle determines the ball's return direction.
-- Missing the ball advances the Doomsday Clock by 75 minutes.
+- Missing the ball advances the Doomsday Clock by 38 minutes.
 - Territory imbalance advances the clock quadratically. A difference of 20
   cells advances it by one hour every five real seconds.
 - The game ends when the Doomsday Clock reaches `24:00:00`, when either faction
@@ -68,6 +68,13 @@ Godot_console.exe --headless --disable-crash-handler --path . --export-release W
 ```
 
 The GitHub Pages workflow publishes the contents of `web`.
+
+## Error Reporting
+
+Exported builds use [Sentry for Godot 2.1.1](https://github.com/getsentry/sentry-godot/releases/tag/2.1.1)
+for crash and error diagnostics. Default personal information, screenshots,
+and scene-tree attachments are disabled. The SDK does not auto-initialize
+during editor play.
 
 ## Inspiration
 

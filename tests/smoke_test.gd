@@ -22,6 +22,7 @@ func _init() -> void:
 	assert(game.cells[game._index(7, game.WAR_ROWS)] == game.LEFT)
 	assert(game._format_clock(0.0) == "00:00:00")
 	assert(game._format_clock(game.DOOM_LIMIT) == "24:00:00")
+	assert(is_equal_approx(game.MISS_PENALTY, 38.0 * 60.0))
 	assert(game._find_peace_spawn().x >= 0)
 	game.run_seconds = 120.0
 	assert(is_equal_approx(game._speed_multiplier(), 2.0))
