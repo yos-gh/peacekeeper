@@ -38,7 +38,8 @@ paddle at the bottom of the field.
 | Action | Keyboard | Gamepad | Touchscreen |
 | --- | --- | --- | --- |
 | Move paddle | `A` / `D` or arrow keys | D-pad or left stick | Virtual analog stick |
-| Return to title | `Esc` | B / Circle | Upper-right button |
+| Return to title | `Esc` | B / Circle | — |
+| Toggle fullscreen | Click upper-right button | — | Tap upper-right button |
 | Start / continue | Any key | Any button | Tap |
 
 The virtual controls appear only on phones, tablets, and mobile browsers.

@@ -15,7 +15,7 @@ const PLAYER_MAX_SPEED_MULTIPLIER := 2.0
 const WAR_SPEED_AT_120_SECONDS := 4.0
 const WAR_MAX_SPEED_MULTIPLIER := 8.0
 const WAR_BOUNCE_JITTER := deg_to_rad(4.0)
-const PADDLE_SPEED := 430.0
+const PADDLE_SPEED := 645.0
 const PADDLE_WIDTH := 104.0
 const PADDLE_HEIGHT := 12.0
 const DOOM_LIMIT := 24.0 * 60.0 * 60.0
@@ -24,6 +24,8 @@ const RESPAWN_DELAY := 0.5
 const PADDLE_CONTACT_COOLDOWN := 0.08
 const TITLE_INPUT_DELAY := 0.4
 const GAME_OVER_INPUT_DELAY := 0.75
+const FULLSCREEN_INPUT_COOLDOWN := 0.2
+const FULLSCREEN_BUTTON_RECT := Rect2(876.0, 14.0, 48.0, 48.0)
 const MAX_BOUNCE_ANGLE := deg_to_rad(67.0)
 const CLOCK_REFERENCE_TERRITORY_DIFFERENCE := 20.0
 const CLOCK_RATE_AT_REFERENCE_DIFFERENCE := 60.0 * 60.0 / 5.0
@@ -58,6 +60,7 @@ var title_input_delay := TITLE_INPUT_DELAY
 var touch_id := -1
 var touch_axis := 0.0
 var show_touch_controls := false
+var fullscreen_input_cooldown := 0.0
 var rng := RandomNumberGenerator.new()
 
 
@@ -95,6 +98,7 @@ func reset_game() -> void:
 
 
 func _process(delta: float) -> void:
+	fullscreen_input_cooldown = maxf(0.0, fullscreen_input_cooldown - delta)
 	if Input.is_action_just_pressed("back"):
 		if title_screen:
 			get_tree().quit()
@@ -404,6 +408,13 @@ func _end_game(reason: String) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Consume this before title/game-over taps so the button never changes scenes.
+	if _is_fullscreen_event(event):
+		get_viewport().set_input_as_handled()
+		if fullscreen_input_cooldown <= 0.0:
+			_toggle_fullscreen()
+			fullscreen_input_cooldown = FULLSCREEN_INPUT_COOLDOWN
+		return
 	if title_screen:
 		if title_input_delay <= 0.0 and _is_start_event(event):
 			title_screen = false
@@ -414,9 +425,7 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventScreenTouch:
 		var touch := event as InputEventScreenTouch
-		if show_touch_controls and touch.pressed and touch.position.distance_to(Vector2(900, 38)) < 42.0:
-			get_tree().quit()
-		elif show_touch_controls and touch.pressed and touch.position.y > 620.0 and touch_id < 0:
+		if show_touch_controls and touch.pressed and touch.position.y > 620.0 and touch_id < 0:
 			touch_id = touch.index
 			touch_axis = clampf((touch.position.x - 180.0) / 100.0, -1.0, 1.0)
 		elif not touch.pressed and touch.index == touch_id:
@@ -424,6 +433,24 @@ func _input(event: InputEvent) -> void:
 			touch_axis = 0.0
 	elif show_touch_controls and event is InputEventScreenDrag and event.index == touch_id:
 		touch_axis = clampf((event.position.x - 180.0) / 100.0, -1.0, 1.0)
+
+
+func _is_fullscreen_event(event: InputEvent) -> bool:
+	if event is InputEventScreenTouch:
+		var touch := event as InputEventScreenTouch
+		return touch.pressed and FULLSCREEN_BUTTON_RECT.has_point(touch.position)
+	if event is InputEventMouseButton:
+		var mouse := event as InputEventMouseButton
+		return mouse.pressed and mouse.button_index == MOUSE_BUTTON_LEFT and FULLSCREEN_BUTTON_RECT.has_point(mouse.position)
+	return false
+
+
+func _toggle_fullscreen() -> void:
+	var mode := DisplayServer.window_get_mode()
+	if mode == DisplayServer.WINDOW_MODE_FULLSCREEN or mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 
 
 func _is_start_event(event: InputEvent) -> bool:
@@ -456,6 +483,7 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, Vector2(960, 720)), BG)
 	if title_screen:
 		_draw_title_screen()
+		_draw_fullscreen_button()
 		return
 	for y in ROWS:
 		for x in COLS:
@@ -482,14 +510,31 @@ func _draw() -> void:
 		# Native mobile and mobile Web only; a touchscreen desktop remains uncluttered.
 		draw_circle(Vector2(180, 676), 28.0, Color(1, 1, 1, 0.08))
 		draw_circle(Vector2(180 + touch_axis * 20.0, 676), 11.0, Color(1, 1, 1, 0.30))
-		draw_circle(Vector2(900, 38), 18.0, Color(1, 1, 1, 0.10))
-		draw_string(font, Vector2(891, 44), "×", HORIZONTAL_ALIGNMENT_CENTER, 18, 18, MUTED)
 	if game_over:
 		draw_rect(Rect2(FIELD_ORIGIN, FIELD_SIZE), Color(0.03, 0.08, 0.10, 0.86))
 		draw_string(font, Vector2(192, 304), "THE CLOCK STRIKES", HORIZONTAL_ALIGNMENT_CENTER, 576, 28, DANGER)
 		draw_string(font, Vector2(192, 346), game_over_reason, HORIZONTAL_ALIGNMENT_CENTER, 576, 18, INK)
 		var restart_text := "PRESS ANY KEY TO RETURN TO TITLE" if game_over_input_delay <= 0.0 else "·  ·  ·"
 		draw_string(font, Vector2(192, 394), restart_text, HORIZONTAL_ALIGNMENT_CENTER, 576, 14, MUTED)
+	_draw_fullscreen_button()
+
+
+func _draw_fullscreen_button() -> void:
+	var center := FULLSCREEN_BUTTON_RECT.get_center()
+	var left := center.x - 9.0
+	var right := center.x + 9.0
+	var top := center.y - 9.0
+	var bottom := center.y + 9.0
+	const ARM := 6.0
+	draw_circle(center, 22.0, Color(1, 1, 1, 0.10))
+	draw_line(Vector2(left, top + ARM), Vector2(left, top), MUTED, 2.0)
+	draw_line(Vector2(left, top), Vector2(left + ARM, top), MUTED, 2.0)
+	draw_line(Vector2(right - ARM, top), Vector2(right, top), MUTED, 2.0)
+	draw_line(Vector2(right, top), Vector2(right, top + ARM), MUTED, 2.0)
+	draw_line(Vector2(left, bottom - ARM), Vector2(left, bottom), MUTED, 2.0)
+	draw_line(Vector2(left, bottom), Vector2(left + ARM, bottom), MUTED, 2.0)
+	draw_line(Vector2(right - ARM, bottom), Vector2(right, bottom), MUTED, 2.0)
+	draw_line(Vector2(right, bottom - ARM), Vector2(right, bottom), MUTED, 2.0)
 
 
 func _draw_title_screen() -> void:

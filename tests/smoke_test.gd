@@ -8,6 +8,21 @@ func _init() -> void:
 	await process_frame
 	assert(game.title_screen)
 	assert(is_equal_approx(game.title_input_delay, game.TITLE_INPUT_DELAY))
+	assert(is_equal_approx(game.PADDLE_SPEED, 645.0))
+	var fullscreen_click := InputEventMouseButton.new()
+	fullscreen_click.button_index = MOUSE_BUTTON_LEFT
+	fullscreen_click.pressed = true
+	fullscreen_click.position = game.FULLSCREEN_BUTTON_RECT.get_center()
+	var fullscreen_touch := InputEventScreenTouch.new()
+	fullscreen_touch.pressed = true
+	fullscreen_touch.position = game.FULLSCREEN_BUTTON_RECT.get_center()
+	assert(game._is_fullscreen_event(fullscreen_click))
+	assert(game._is_fullscreen_event(fullscreen_touch))
+	game.title_input_delay = 0.0
+	game.fullscreen_input_cooldown = 1.0
+	game._input(fullscreen_touch)
+	assert(game.title_screen)
+	game.fullscreen_input_cooldown = 0.0
 	game.title_screen = false
 	assert(game.cells.size() == game.COLS * game.ROWS)
 	var counts: Array[int] = game._territory_counts()
@@ -79,6 +94,11 @@ func _init() -> void:
 	game._process(0.5)
 	assert(game.game_over)
 	assert(game.game_over_input_delay > 0.0)
+	game.game_over_input_delay = 0.0
+	game.fullscreen_input_cooldown = 1.0
+	game._input(fullscreen_click)
+	assert(game.game_over)
+	game.fullscreen_input_cooldown = 0.0
 	game._return_to_title()
 	assert(game.title_screen)
 	assert(not game.game_over)
