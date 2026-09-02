@@ -18,7 +18,7 @@ func _init() -> void:
 	fullscreen_touch.position = game.FULLSCREEN_BUTTON_RECT.get_center()
 	assert(game._is_fullscreen_event(fullscreen_click))
 	assert(game._is_fullscreen_event(fullscreen_touch))
-	assert(game.TOUCH_STICK_CENTER == Vector2(142.0, 594.0))
+	assert(game.TOUCH_STICK_CENTER == Vector2(96.0, 594.0))
 	assert(game._is_touch_stick_start(game.TOUCH_STICK_CENTER))
 	assert(is_equal_approx(game._touch_axis_for_position(game.TOUCH_STICK_CENTER + Vector2(100.0, 0.0)), 1.0))
 	assert(is_equal_approx(game._touch_axis_for_position(game.TOUCH_STICK_CENTER - Vector2(100.0, 0.0)), -1.0))
