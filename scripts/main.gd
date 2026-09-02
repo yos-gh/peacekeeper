@@ -26,6 +26,9 @@ const TITLE_INPUT_DELAY := 0.4
 const GAME_OVER_INPUT_DELAY := 0.75
 const FULLSCREEN_INPUT_COOLDOWN := 0.2
 const FULLSCREEN_BUTTON_RECT := Rect2(876.0, 14.0, 48.0, 48.0)
+const TOUCH_STICK_CENTER := Vector2(142.0, 594.0)
+const TOUCH_STICK_ACTIVATION_RADIUS := 110.0
+const TOUCH_STICK_AXIS_RANGE := 100.0
 const MAX_BOUNCE_ANGLE := deg_to_rad(67.0)
 const CLOCK_REFERENCE_TERRITORY_DIFFERENCE := 20.0
 const CLOCK_RATE_AT_REFERENCE_DIFFERENCE := 60.0 * 60.0 / 5.0
@@ -425,14 +428,22 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventScreenTouch:
 		var touch := event as InputEventScreenTouch
-		if show_touch_controls and touch.pressed and touch.position.y > 620.0 and touch_id < 0:
+		if show_touch_controls and touch.pressed and _is_touch_stick_start(touch.position) and touch_id < 0:
 			touch_id = touch.index
-			touch_axis = clampf((touch.position.x - 180.0) / 100.0, -1.0, 1.0)
+			touch_axis = _touch_axis_for_position(touch.position)
 		elif not touch.pressed and touch.index == touch_id:
 			touch_id = -1
 			touch_axis = 0.0
 	elif show_touch_controls and event is InputEventScreenDrag and event.index == touch_id:
-		touch_axis = clampf((event.position.x - 180.0) / 100.0, -1.0, 1.0)
+		touch_axis = _touch_axis_for_position(event.position)
+
+
+func _is_touch_stick_start(position: Vector2) -> bool:
+	return position.distance_to(TOUCH_STICK_CENTER) <= TOUCH_STICK_ACTIVATION_RADIUS
+
+
+func _touch_axis_for_position(position: Vector2) -> float:
+	return clampf((position.x - TOUCH_STICK_CENTER.x) / TOUCH_STICK_AXIS_RANGE, -1.0, 1.0)
 
 
 func _is_fullscreen_event(event: InputEvent) -> bool:
@@ -508,8 +519,8 @@ func _draw() -> void:
 
 	if show_touch_controls:
 		# Native mobile and mobile Web only; a touchscreen desktop remains uncluttered.
-		draw_circle(Vector2(180, 676), 28.0, Color(1, 1, 1, 0.08))
-		draw_circle(Vector2(180 + touch_axis * 20.0, 676), 11.0, Color(1, 1, 1, 0.30))
+		draw_circle(TOUCH_STICK_CENTER, 28.0, Color(1, 1, 1, 0.08))
+		draw_circle(TOUCH_STICK_CENTER + Vector2(touch_axis * 20.0, 0.0), 11.0, Color(1, 1, 1, 0.30))
 	if game_over:
 		draw_rect(Rect2(FIELD_ORIGIN, FIELD_SIZE), Color(0.03, 0.08, 0.10, 0.86))
 		draw_string(font, Vector2(192, 304), "THE CLOCK STRIKES", HORIZONTAL_ALIGNMENT_CENTER, 576, 28, DANGER)

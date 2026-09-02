@@ -18,12 +18,29 @@ func _init() -> void:
 	fullscreen_touch.position = game.FULLSCREEN_BUTTON_RECT.get_center()
 	assert(game._is_fullscreen_event(fullscreen_click))
 	assert(game._is_fullscreen_event(fullscreen_touch))
+	assert(game.TOUCH_STICK_CENTER == Vector2(142.0, 594.0))
+	assert(game._is_touch_stick_start(game.TOUCH_STICK_CENTER))
+	assert(is_equal_approx(game._touch_axis_for_position(game.TOUCH_STICK_CENTER + Vector2(100.0, 0.0)), 1.0))
+	assert(is_equal_approx(game._touch_axis_for_position(game.TOUCH_STICK_CENTER - Vector2(100.0, 0.0)), -1.0))
 	game.title_input_delay = 0.0
 	game.fullscreen_input_cooldown = 1.0
 	game._input(fullscreen_touch)
 	assert(game.title_screen)
 	game.fullscreen_input_cooldown = 0.0
 	game.title_screen = false
+	game.show_touch_controls = true
+	var stick_touch := InputEventScreenTouch.new()
+	stick_touch.index = 7
+	stick_touch.pressed = true
+	stick_touch.position = game.TOUCH_STICK_CENTER + Vector2(100.0, 0.0)
+	game._input(stick_touch)
+	assert(game.touch_id == 7)
+	assert(is_equal_approx(game.touch_axis, 1.0))
+	stick_touch.pressed = false
+	game._input(stick_touch)
+	assert(game.touch_id == -1)
+	assert(is_zero_approx(game.touch_axis))
+	game.show_touch_controls = false
 	assert(game.cells.size() == game.COLS * game.ROWS)
 	var counts: Array[int] = game._territory_counts()
 	assert(game.WAR_ROWS == 15)
