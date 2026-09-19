@@ -9,6 +9,9 @@
 # Private design notes
 /docs/draft.md
 
+# Sentry Debug binaries
+addons/sentry/bin/windows/x86_64/~libsentry.windows.debug.x86_64.dll
+
 # Editors and operating systems
 .idea/
 .vscode/
